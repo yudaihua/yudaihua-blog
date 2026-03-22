@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>追番日记 | 个人动漫博客</title>
+  <meta name="description" content="番剧评测 · 追番记录 · ACG爱好者的自留地">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FDF8F3;
+      --bg-card: #FFFFFF;
+      --text: #2D2A26;
+      --text-light: #6B6560;
+      --accent: #E8A4B8;
+      --accent-dark: #D4879E;
+      --paper: #C9B18C;
+      --paper-light: #E8DFD0;
+      --link: #7B6D8D;
+      --border: rgba(45, 42, 38, 0.1);
+      --shadow: 0 4px 24px rgba(45, 42, 38, 0.08);
+      --shadow-hover: 0 8px 32px rgba(45, 42, 38, 0.12);
+      --radius: 12px;
+      --font-sc: 'Noto Sans SC', 'Ma Shan Zheng', sans-serif;
+      --font-jp: 'Noto Serif JP', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sc);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+    a { color: var(--link); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-dark); }
+    img { max-width: 100%; border-radius: var(--radius); }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+    /* 导航栏 */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253, 248, 243, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav .inner {
+      max-width: 860px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    nav .logo {
+      font-family: var(--font-jp);
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--text); letter-spacing: 0.05em;
+    }
+    nav .logo span { color: var(--accent); }
+    nav .links { display: flex; gap: 28px; list-style: none; }
+    nav .links a {
+      font-size: 0.9rem; font-weight: 500; color: var(--text-light);
+      position: relative; padding: 4px 0;
+    }
+    nav .links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    nav .links a:hover::after, nav .links a.active::after { width: 100%; }
+    nav .links a:hover, nav .links a.active { color: var(--text); }
+    .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .menu-btn span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 1px; transition: 0.3s; }
+
+    /* Hero区 */
+    .hero {
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(232, 164, 184, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-family: var(--font-jp);
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 700; letter-spacing: 0.08em;
+      margin-bottom: 16px; color: var(--text);
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero .subtitle {
+      font-size: 1.1rem; color: var(--text-light);
+      max-width: 480px; margin: 0 auto 32px;
+      font-weight: 300;
+    }
+    .hero .divider {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin: 32px 0;
+    }
+    .hero .divider .line { width: 60px; height: 1px; background: var(--paper); }
+    .hero .divider .diamond { width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); }
+
+    /* 标签栏 */
+    .tag-bar {
+      padding: 0 24px 32px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .tag {
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 500;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-light); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tag:hover, .tag.active {
+      background: var(--accent); color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* 文章列表 */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      padding: 0 24px 60px;
+      max-width: 900px; margin: 0 auto;
+    }
+    .post-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden; cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex; flex-direction: column;
+    }
+    .post-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+    .post-card .cover {
+      width: 100%; height: 200px; object-fit: cover;
+    }
+    .post-card .card-body { padding: 20px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .post-card .card-meta { display: flex; gap: 12px; margin-bottom: 12px; }
+    .post-card .card-tag {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em;
+      color: var(--accent); text-transform: uppercase;
+    }
+    .post-card .card-date { font-size: 0.78rem; color: var(--text-light); }
+    .post-card h2 {
+      font-family: var(--font-jp);
+      font-size: 1.25rem; font-weight: 700; line-height: 1.4;
+      margin-bottom: 10px; color: var(--text);
+    }
+    .post-card .excerpt { font-size: 0.88rem; color: var(--text-light); line-height: 1.7; flex: 1; }
+    .post-card .read-more {
+      margin-top: 16px; font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; gap: 6px;
+      color: var(--link);
+    }
+    .post-card .read-more::after { content: '→'; transition: transform 0.2s; }
+    .post-card:hover .read-more::after { transform: translateX(4px); }
+
+    /* 文章详情 */
+    .article { display: none; }
+    .article.active { display: block; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 24px 24px 0; max-width: 860px; margin: 0 auto;
+      font-size: 0.88rem; color: var(--text-light); cursor: pointer;
+    }
+    .back-btn:hover { color: var(--accent); }
+    .back-btn::before { content: '\2190'; margin-right: 4px; }
+    .article-header {
+      max-width: 860px; margin: 0 auto;
+      padding: 32px 24px 40px; text-align: center;
+    }
+    .article-header .category {
+      display: inline-block;
+      padding: 4px 14px; border-radius: 20px;
+      background: var(--accent); color: #fff;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;
+      margin-bottom: 20px;
+    }
+    .article-header h1 {
+      font-family: var(--font-jp);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700; line-height: 1.3;
+      margin-bottom: 16px; letter-spacing: 0.03em;
+    }
+    .article-meta { display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; color: var(--text-light); }
+    .article-cover {
+      max-width: 860px; margin: 0 auto 40px;
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .article-cover img { width: 100%; height: 400px; object-fit: cover; }
+    .article-body {
+      max-width: 680px; margin: 0 auto;
+      padding: 0 24px 80px;
+      font-size: 1.05rem; line-height: 2;
+    }
+    .article-body p { margin-bottom: 1.5em; }
+    .article-body h2 {
+      font-family: var(--font-jp);
+      font-size: 1.5rem; font-weight: 700;
+      margin: 2em 0 0.8em;
+      padding-bottom: 8px; border-bottom: 2px solid var(--paper-light);
+      color: var(--text);
+    }
+    .article-body h3 { font-size: 1.2rem; margin: 1.5em 0 0.5em; }
+    .article-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px; margin: 1.8em 0;
+      background: rgba(232, 164, 184, 0.08);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-style: italic; color: var(--text-light);
+    }
+    .article-body ul, .article-body ol { padding-left: 1.5em; margin-bottom: 1.5em; }
+    .article-body li { margin-bottom: 0.5em; }
+    .article-body table { width: 100%; border-collapse: collapse; margin: 1.8em 0; font-size: 0.95rem; }
+    .article-body th, .article-body td { padding: 10px 14px; border: 1px solid var(--border); text-align: left; }
+    .article-body th { background: var(--paper-light); font-weight: 600; }
+    .article-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5em 0; }
+    .article-body em { color: var(--text-light); }
+    .article-body strong { color: var(--text); }
+
+    /* 评分展示 */
+    .rating-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px; margin: 2em 0;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .rating-box .rating-label { font-weight: 600; color: var(--text-light); font-size: 0.9rem; }
+    .rating-box .rating-stars { font-size: 1.3rem; letter-spacing: 2px; }
+    .rating-box .rating-num { font-family: var(--font-jp); font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+    /* 标签 */
+    .article-tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 2em 0; }
+    .article-tag {
+      padding: 4px 12px; border-radius: 20px;
+      background: var(--paper-light); color: var(--text-light);
+      font-size: 0.8rem;
+    }
+
+    /* 关于/归档页 */
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-inner { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+    .page-inner h1 {
+      font-family: var(--font-jp);
+      font-size: 2rem; font-weight: 700; margin-bottom: 32px;
+      text-align: center; position: relative;
+    }
+    .page-inner h1::after {
+      content: ''; display: block; width: 40px; height: 3px;
+      background: var(--accent); margin: 16px auto 0;
+      border-radius: 2px;
+    }
+    .about-card {
+      background: var(--bg-card); border-radius: var(--radius);
+      border: 1px solid var(--border); padding: 32px;
+      margin-bottom: 24px;
+    }
+    .about-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: var(--text); }
+    .about-card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.8; }
+    .fav-list { list-style: none; }
+    .fav-list li {
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.92rem;
+    }
+    .fav-list li:last-child { border-bottom: none; }
+    .fav-list li::before { content: '\1F338'; font-size: 0.85rem; }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem; color: var(--text-light);
+    }
+    footer .footer-logo { font-family: var(--font-jp); font-size: 1rem; margin-bottom: 8px; color: var(--text); }
+
+    /* 樱花落瓣动效 */
+    .sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+    .sakura { position: absolute; width: 10px; height: 10px; background: var(--accent); opacity: 0.35; border-radius: 50% 0 50% 50%; transform: rotate(45deg); animation: fall linear infinite; }
+    @keyframes fall {
+      0% { transform: rotate(45deg) translateY(-20px) translateX(0); opacity: 0; }
+      10% { opacity: 0.35; }
+      100% { transform: rotate(45deg) translateY(105vh) translateX(80px); opacity: 0; }
+    }
+
+    /* 页面淡入 */
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* 空状态 */
+    .empty-state { text-align: center; padding: 80px 24px; color: var(--text-light); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      nav .links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); flex-direction: column; padding: 16px 24px; gap: 16px; }
+      nav .links.open { display: flex; }
+      .menu-btn { display: block; }
+      .hero { padding: 60px 24px 40px; }
+      .posts-grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
+      .article-cover img { height: 240px; }
+      .article-body { font-size: 1rem; }
+      .rating-box { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 樱花落瓣 -->
+<div class="sakura-container" id="sakuraContainer"></div>
+
+<!-- 导航 -->
+<nav>
+  <div class="inner">
+    <a href="#" class="logo" onclick="showHome(); return false;">追番<span>日记</span></a>
+    <button class="menu-btn" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="links" id="navLinks">
+      <li><a href="#" class="active" onclick="showHome(); return false;">首页</a></li>
+      <li><a href="#" onclick="showPage('archive'); return false;">归档</a></li>
+      <li><a href="#" onclick="showPage('about'); return false;">关于</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- 首页视图 -->
+<div id="homeView">
+  <section class="hero fade-in">
+    <h1>在二次元的世界里<span class="accent">，</span><br>记录每一份心动</h1>
+    <p class="subtitle">番剧评测 · 追番记录 · 碎碎念。一个ACG爱好者的自留地。</p>
+    <div class="divider">
+      <div class="line"></div>
+      <div class="diamond"></div>
+      <div class="line"></div>
+    </div>
+  </section>
+
+  <div class="tag-bar" id="tagBar">
+    <span class="tag active" data-tag="all">全部</span>
+    <span class="tag" data-tag="番剧评测">番剧评测</span>
+    <span class="tag" data-tag="追番记录">追番记录</span>
+    <span class="tag" data-tag="机战">机战</span>
+    <span class="tag" data-tag="百合">百合</span>
+    <span class="tag" data-tag="日常">日常</span>
+    <span class="tag" data-tag="推理">推理</span>
+  </div>
+
+  <div class="posts-grid" id="postsGrid"></div>
+</div>
+
+<!-- 文章详情视图 -->
+<div id="articleView" class="article"></div>
+
+<!-- 归档页 -->
+<div id="archiveView" class="page">
+  <div class="page-inner">
+    <h1>归档</h1>
+    <div id="archiveList"></div>
+  </div>
+</div>
+
+<!-- 关于页 -->
+<div id="aboutView" class="page">
+  <div class="page-inner">
+    <h1>关于</h1>
+    <div class="about-card">
+      <h3>你好呀</h3>
+      <p>这里是某个ACG爱好者的自留地。日常追番，偶尔写写评测，偶尔发发牢骚。希望能在这里记录下每一次被作品打动的心动瞬间</p>
+    </div>
+    <div class="about-card">
+      <h3>喜欢的作品类型</h3>
+      <p>萝卜控 · 百合胃 · 有时也看日常和推理。比起龙傲天爽番，更喜欢细腻的情感刻画和世界观有趣的作品。</p>
+    </div>
+    <div class="about-card">
+      <h3>追番列表（部分）</h3>
+      <ul class="fav-list">
+        <li>水星的魔女 — 年度最佳原创机战</li>
+        <li>孤独摇滚 — 乐队番的神</li>
+        <li>mygo — 写得比我人生还真实</li>
+        <li>迷宫饭 — 奇幻美食番新标杆</li>
+        <li>夏日大作战 — 细田守永远的巅峰</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">追番日记</div>
+  <p>用爱发电，记录每一次心动 · <a href="https://yudaihua.us.ci" style="color: var(--link);">yudaihua.us.ci</a></p>
+</footer>
+
+<script>
+// ========== 文章数据 ==========
+const POSTS = [
+  {
+    slug: "g-witch-review",
+    title: "水星的魔女：新世代机战的高度",
+    date: "2026-03-21",
+    tags: ["番剧评测", "机战", "百合", "萝卜"],
+    category: "番剧评测",
+    cover: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80",
+    excerpt: "《水星的魔女》是大塚雅彦执导的原创机战番，讲述以魔女试炼为名的太空学院故事。相比传统高达的沉重，它更像是一首关于成长和羁绊的青春诗篇。",
+    rating: 4,
+    body: `
+      <blockquote>"比起当什么魔女，我还是更想和你在一起。"</blockquote>
+      <h2>前言</h2>
+      <p>《水星的魔女》是大塚雅彦执导的原创机战番，讲述以魔女试炼为名的太空学院故事。相比传统高达的沉重，它更像是一首关于成长和羁绊的青春诗篇。</p>
+      <h2>剧情：校园与宇宙的交织</h2>
+      <p>故事发生在阿斯提卡西亚高等专们学园，女主苏莱塔入学后发现所谓"魔女试炼"实际上是高达之间的决斗。而她的对手——也是她的室友——米奥琳涅，两人的关系从对立到理解，再到惺惺相惜，细腻而真实。全剧没有刻意制造反派，每个角色都有自己的立场和苦衷，这让观感非常舒适。</p>
+      <h2>机战：华丽却不失热血</h2>
+      <p>虽然整体氛围比《铁血的孤儿》温和许多，但战斗场面依然可圈可点。特别是EDIF回合制系统的设计，让决斗充满了战略感而非纯粹的力量碾压。风灵高达的设计也相当出彩，流线型又带着一丝优雅，很符合苏莱塔的性格。</p>
+      <h2>观后感</h2>
+      <p>全剧最打动我的不是战斗，而是苏莱塔那种"哪怕全世界与我为敌，我也要保护你"的纯粹。它用最温柔的方式讲述了一个关于勇气和爱的故事。</p>
+      <p><strong>适合人群：</strong>机战粉丝、百合爱好者、喜欢看女孩子贴贴的观众</p>
+      <div class="rating-box">
+        <div>
+          <div class="rating-label">综合评分</div>
+          <div class="rating-stars">&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <div class="rating-num">9/10</div>
+      </div>
+      <div class="article-tags">
+        <span class="article-tag">机战</span>
+        <span class="article-tag">萝卜</span>
+        <span class="article-tag">百合</span>
+        <span class="article-tag">番剧评测</span>
+      </div>
+      <hr>
+      <p><em>Written by 追番的咸鱼 · 2026-03-21</em></p>
+    `
+  },
+  {
+    slug: "boogiepop-review",
+    title: "雨宫天 × 忧郁症：文学青年的私货盛宴",
+    date: "2026-03-15",
+    tags: ["番剧评测", "推理", "百合"],
+    category: "番剧评测",
+    cover: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800&q=80",
+    excerpt: "《忧郁症》改编自池上永一原作的神户杰作论。比起普通动画，它更像是一部能够引发深度思考的文学作品。",
+    rating: 5,
+    body: `
+      <blockquote>"世界的重量，一个人扛不起。"</blockquote>
+      <h2>前言</h2>
+      <p>《忧郁症》改编自池上永一原作的神户杰作论。比起普通动画，它更像是一部能够引发深度思考的文学作品。雨宫天的演技在这里得到了极大发挥。</p>
+      <h2>关于原作</h2>
+      <p>原作小说以日本神户为舞台，围绕一名高中生渡良濑准太展开。他拥有特殊的能力，能够感知到人们的"忧郁"——那些藏在内心深处无法言说的情感。</p>
+      <h2>动画表现</h2>
+      <p>WIT STUDIO的作画保持了高水准。整部作品弥漫着一种潮湿、阴郁却又异常美丽的氛围，与"忧郁症"这个主题完美契合。</p>
+      <h2>推荐理由</h2>
+      <p>如果你喜欢慢节奏、有深度的作品，不要错过。</p>
+      <div class="rating-box">
+        <div>
+          <div class="rating-label">综合评分</div>
+          <div class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <div class="rating-num">10/10</div>
+      </div>
+      <div class="article-tags">
+        <span class="article-tag">推理</span>
+        <span class="article-tag">百合</span>
+        <span class="article-tag">番剧评测</span>
+      </div>
+    `
+  },
+  {
+    slug: "wandering-witch",
+    title: "迷宫饭：奇幻美食番的新标杆",
+    date: "2026-03-10",
+    tags: ["番剧评测", "奇幻", "日常"],
+    category: "番剧评测",
+    cover: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=800&q=80",
+    excerpt: "用吃怪物的方式打开地下城冒险，《迷宫饭》用实际行动证明了美食和冒险可以兼得，而且还能如此有趣。",
+    rating: 5,
+    body: `
+      <blockquote>"不是所有龙都需要打败，有些只需要被煮熟。"</blockquote>
+      <h2>前言</h2>
+      <p>《迷宫饭》改编自九井谅子的同名漫画，讲的是一支冒险者队伍在地下城缺钱缺粮的窘境下，开始研究怎么用料理的方式处理迷宫中的怪物。</p>
+      <h2>为什么好看</h2>
+      <p>它用一种极其认真的态度在讲一件荒谬的事。每一顿饭都有扎实的考据，怪物的生态、烹饪方式、风味搭配——全部都有模有样。同时它也没有回避冒险本身的危险和残酷，团队之间的羁绊在困境中逐渐加深。</p>
+      <h2>观后感</h2>
+      <p>看完整个人都饿了，而且会产生一种"我上我也行"的错觉。不说了，先去吃个饭。</p>
+      <div class="rating-box">
+        <div>
+          <div class="rating-label">综合评分</div>
+          <div class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <div class="rating-num">9.5/10</div>
+      </div>
+      <div class="article-tags">
+        <span class="article-tag">奇幻</span>
+        <span class="article-tag">日常</span>
+        <span class="article-tag">番剧评测</span>
+      </div>
+    `
+  },
+  {
+    slug: "march-2026-watching",
+    title: "2026年3月追番记录",
+    date: "2026-03-01",
+    tags: ["追番记录", "日常"],
+    category: "追番记录",
+    cover: "https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800&q=80",
+    excerpt: "3月新番神仙打架，整理了一下目前的追番列表和进度，有踩坑的也有真香的。",
+    rating: null,
+    body: `
+      <h2>目前进度</h2>
+      <ul>
+        <li>《再见龙生》— 第3话，继续追</li>
+        <li>《迷宫饭》完结 — 神作预定</li>
+        <li>《女仆冥游记》— 意外有趣</li>
+        <li>《胆大党》第二季 — 画风有点崩，剧情还行</li>
+      </ul>
+      <h2>踩坑记录</h2>
+      <p>本月最大坑是某部异世界转生番，男主开局满级但依然要上课，意义不明。</p>
+      <h2>真香预警</h2>
+      <p>《SHOGUN×HEART》意外好看，机甲设计很有味道，已入坑。</p>
+      <div class="article-tags">
+        <span class="article-tag">追番记录</span>
+        <span class="article-tag">日常</span>
+      </div>
+    `
+  }
+];
+
+let currentTag = 'all';
+
+function init() {
+  renderPosts();
+  setupTags();
+  startSakura();
+}
+
+function renderPosts(tag) {
+  tag = tag || currentTag;
+  const grid = document.getElementById('postsGrid');
+  const filtered = tag === 'all' ? POSTS : POSTS.filter(p => p.tags.includes(tag));
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">&#x1F338;</div><p>这个分类下还没有文章哦～</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(post => `
+    <article class="post-card fade-in" onclick="showArticle('${post.slug}')">
+      <img class="cover" src="${post.cover}" alt="${post.title}" loading="lazy">
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-tag">${post.category}</span>
+          <span class="card-date">${post.date}</span>
+        </div>
+        <h2>${post.title}</h2>
+        <p class="excerpt">${post.excerpt}</p>
+        <span class="read-more">阅读更多</span>
+      </div>
+    </article>
+  `).join('');
+}
+
+function setupTags() {
+  document.querySelectorAll('.tag').forEach(tagEl => {
+    tagEl.addEventListener('click', () => {
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+      tagEl.classList.add('active');
+      currentTag = tagEl.dataset.tag;
+      renderPosts(currentTag);
+    });
+  });
+}
+
+function showArticle(slug) {
+  const post = POSTS.find(p => p.slug === slug);
+  if (!post) return;
+  document.getElementById('homeView').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+  const view = document.getElementById('articleView');
+  view.classList.add('active');
+  view.style.display = 'block';
+  view.innerHTML = `
+    <div class="back-btn" onclick="showHome()">返回首页</div>
+    <header class="article-header fade-in">
+      <span class="category">${post.category}</span>
+      <h1>${post.title}</h1>
+      <div class="article-meta">
+        <span>&#x1F4C5 ${post.date}</span>
+        <span>&#x1F3F7 ${post.tags.join(' · ')}</span>
+      </div>
+    </header>
+    <div class="article-cover fade-in">
+      <img src="${post.cover}" alt="${post.title}">
+    </div>
+    <div class="article-body fade-in">
+      ${post.body}
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+function showHome() {
+  document.querySelectorAll('.page, .article').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
+  const home = document.getElementById('homeView');
+  home.style.display = 'block';
+  document.querySelectorAll('nav .links a').forEach(a => a.classList.remove('active'));
+  document.querySelector('nav .links a').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showPage(page) {
+  const pages = { archive: 'archiveView', about: 'aboutView' };
+  const view = document.getElementById(pages[page]);
+  if (!view) return;
+  showHome();
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+  view.style.display = 'block';
+  view.classList.add('active');
+  const target = page === 'archive' ? 1 : 2;
+  document.querySelectorAll('nav .links a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('nav .links a')[target].classList.add('active');
+  if (page === 'archive') renderArchive();
+  window.scrollTo(0, 0);
+}
+
+function renderArchive() {
+  const list = document.getElementById('archiveList');
+  const grouped = {};
+  POSTS.forEach(p => {
+    const month = p.date.substring(0, 7);
+    if (!grouped[month]) grouped[month] = [];
+    grouped[month].push(p);
+  });
+  const months = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+  if (months.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">&#x1F4E6;</div><p>还没有归档哦～</p></div>';
+    return;
+  }
+  list.innerHTML = months.map(month => `
+      <div style="margin-bottom:32px;">
+        <h3 style="font-family:var(--font-jp);font-size:1.1rem;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--text);">${month}</h3>
+        <ul style="list-style:none;">
+          ${posts.map(p => `<li style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <a href="#" onclick="showArticle('${p.slug}');return false;" style="color:var(--text);font-size:0.95rem;">${p.title}</a>
+            <span style="font-size:0.8rem;color:var(--text-light);">${p.date}</span>
+          </li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+}
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+function startSakura() {
+  const container = document.getElementById('sakuraContainer');
+  if (!container) return;
+  const createPetal = () => {
+    const petal = document.createElement('div');
+    petal.className = 'sakura';
+    petal.style.left = Math.random() * 100 + '%';
+    petal.style.animationDuration = (Math.random() * 5 + 8) + 's';
+    petal.style.animationDelay = Math.random() * 5 + 's';
+    petal.style.width = (Math.random() * 6 + 6) + 'px';
+    petal.style.height = petal.style.width;
+    container.appendChild(petal);
+    setTimeout(() => petal.remove(), 15000);
+  };
+  setInterval(createPetal, 2000);
+  for (let i = 0; i < 5; i++) setTimeout(createPetal, i * 300);
+}
+
+document.addEventListener('DOMContentLoaded', init);
