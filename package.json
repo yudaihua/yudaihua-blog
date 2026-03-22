@@ -1,0 +1,10 @@
+{
+  "name": "yudaihua-blog",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "tencentcloud-sdk": "^4.0.0"
+  }
+}
