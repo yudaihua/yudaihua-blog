@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to EdgeOne Pages
-        uses: Yidadaa/edgeone-pages-action@v1
+        uses: Yudaihua/edgeone-pages-action@v1
         with:
           secret-id: ${{ secrets.TENCENT_SECRET_ID }}
           secret-key: ${{ secrets.TENCENT_SECRET_KEY }}
