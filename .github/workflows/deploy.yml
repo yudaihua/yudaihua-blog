@@ -12,9 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy to EdgeOne
-        run: node .github/deploy.js
-        env:
-          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
-          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
-          TENCENT_APP_ID: ${{ secrets.TENCENT_APP_ID }}
+      - name: Deploy to EdgeOne Pages
+        uses: baipeng/edgeone-pages-action@v1.1.0
+        with:
+          api_key: ${{ secrets.TENCENT_SECRET_KEY }}
+          api_key_id: ${{ secrets.TENCENT_SECRET_ID }}
+          app_id: ${{ secrets.TENCENT_APP_ID }}
+          git_repo: yudaihua/yudaihua-blog
+          git_branch: main
+          output_dir: /
